@@ -26,7 +26,7 @@ export const products = productsFromServer.map((product) => {
   };
 });
 
-function getPreparedProducts(productArray, { textValue, filteredField }) {
+function getPreparedProducts(productArray, { textValue, filteredField, filteredGroceryField }) {
   let preparedProducts = [...productArray];
 
   if (textValue) {
@@ -37,15 +37,19 @@ function getPreparedProducts(productArray, { textValue, filteredField }) {
     preparedProducts = preparedProducts.filter(chosenProduct => chosenProduct.user.name === filteredField);
   }
 
+  if (filteredGroceryField) {
+    preparedProducts = preparedProducts.filter(chosenProduct => chosenProduct.category.title === filteredGroceryField);
+  }
+
   return preparedProducts;
 }
 
 export const App = () => {
   const [textValue, setTextValue] = useState('');
   const [filteredField, setFilteredField] = useState('');
-  // const [filteredGroceryField, setFilteredGroceryField] = useState('');
+  const [filteredGroceryField, setFilteredGroceryField] = useState('');
 
-  const visibleProducts = getPreparedProducts(products, { textValue, filteredField });
+  const visibleProducts = getPreparedProducts(products, { textValue, filteredField, filteredGroceryField });
 
   function handReset() {
     setTextValue('');
@@ -121,21 +125,27 @@ export const App = () => {
               <a
                 href="#/"
                 data-cy="AllCategories"
-                className="button is-success mr-6 is-outlined"
+                className={`button is-success mr-6 ${filteredGroceryField && 'is-outlined'}`}
+                onClick={() => setFilteredGroceryField('')}
               >
                 All
               </a>
 
-              {categoriesFromServer.map(category => (
-                <a
-                  key={category.id}
-                  data-cy="Category"
-                  className="button mr-2 my-1 is-info"
-                  href="#/"
-                >
-                  {category.title}
-                </a>
-              ))}
+              {categoriesFromServer.map((category) => {
+                const categoryTitle = category.title;
+
+                return (
+                  <a
+                    key={category.id}
+                    data-cy="Category"
+                    className={`button mr-2 my-1 ${filteredGroceryField === category.title && 'is-info'}`}
+                    href="#/"
+                    onClick={() => setFilteredGroceryField(categoryTitle)}
+                  >
+                    {category.title}
+                  </a>
+                );
+              })}
             </div>
 
             <div className="panel-block">
