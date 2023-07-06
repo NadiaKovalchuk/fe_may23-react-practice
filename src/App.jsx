@@ -54,6 +54,7 @@ export const App = () => {
   function handReset() {
     setTextValue('');
     setFilteredField('');
+    setFilteredGroceryField('');
   }
 
   return (
